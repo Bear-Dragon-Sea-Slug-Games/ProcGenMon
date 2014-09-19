@@ -34,14 +34,14 @@ Player.prototype = {
 		this.sprite.body.setSize(24, 32);
 
 		// walking animations
-        this.sprite.animations.add('up_1', [10, 11, 10], 5, true);
-        this.sprite.animations.add('up_2', [10, 12, 10], 5, true);
+        this.sprite.animations.add('up_1', [9, 10, 9], 5, true);
+        this.sprite.animations.add('up_2', [9, 11, 9], 5, true);
 		this.sprite.animations.add('down_1', [0, 1, 0], 5, true);
         this.sprite.animations.add('down_2', [0, 2, 0], 5, true);
         this.sprite.animations.add('left_1', [3, 4, 3], 5, true);
         this.sprite.animations.add('left_2', [3, 5, 3], 5, true);
-        this.sprite.animations.add('right_1', [7, 8, 7], 5, true);
-        this.sprite.animations.add('right_2', [7, 9, 7], 5, true);
+        this.sprite.animations.add('right_1', [6, 7, 6], 5, true);
+        this.sprite.animations.add('right_2', [6, 8, 6], 5, true);
 	
         this.cursors = this.game.input.keyboard.createCursorKeys();
     },
