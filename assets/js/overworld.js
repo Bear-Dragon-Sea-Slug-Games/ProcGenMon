@@ -40,8 +40,8 @@ PGM.Overworld.prototype = {
     render: function() {
         // debug
         this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");
-	this.game.debug.text("("+this.player.sprite.x+","+this.player.sprite.y+")",2,36,"#00ff00");
-	this.game.debug.text("("+this.player.sprite.body.velocity.x+","+this.player.sprite.body.velocity.y+")",2,58,"#00ff00");
-	this.game.debug.text("("+this.player.sprite.body.acceleration.x+","+this.player.sprite.body.acceleration.y+")",2,80,"#00ff00");
+    	this.game.debug.text("("+this.player.sprite.x+","+this.player.sprite.y+")",2,36,"#00ff00");
+    	this.game.debug.text("("+this.player.sprite.body.velocity.x+","+this.player.sprite.body.velocity.y+")",2,58,"#00ff00");
+    	this.game.debug.text("("+this.player.sprite.body.acceleration.x+","+this.player.sprite.body.acceleration.y+")",2,80,"#00ff00");
     }	
 };
