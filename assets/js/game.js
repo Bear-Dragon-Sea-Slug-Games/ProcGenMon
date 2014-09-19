@@ -1,16 +1,16 @@
 PGM.Preload = {
-	preload: function() {
-		this.state.add('MainMenu', PGM.MainMenu);
-		this.state.add('Overworld', PGM.Overworld);
-	},
+    preload: function() {
+        this.state.add('MainMenu', PGM.MainMenu);
+        this.state.add('Overworld', PGM.Overworld);
+    },
 
-	create: function() {
+    create: function() {
         this.scale.pageAlignHorizontally = true;
         this.scale.pageAlignVertically = true;
         this.scale.refresh();
 
         this.state.start('MainMenu');
-	}
+    }
 };
 
 var game = new Phaser.Game(480, 360, Phaser.AUTO, 'game', PGM.Preload)
