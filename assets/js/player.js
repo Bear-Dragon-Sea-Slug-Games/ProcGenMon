@@ -13,8 +13,7 @@ Player = function(game) {
 
 Player.prototype = {
 
-	moveDuration: 200,
-	timeMoving: 0,
+	moveSpeed: 100,
 	destination: null,
 	facing: direction.DOWN,
 
@@ -51,55 +50,90 @@ Player.prototype = {
 		else if(this.cursors.left.isDown) nextMove = direction.LEFT;
 		else if(this.cursors.right.isDown) nextMove = direction.RIGHT;
 
-		// if we are in the process of moving, finish the movement for this timestamp
-		if(this.isMoving()) {
-			newPos = this.extrapolateNextPosition(this.game.time.elapsed);
-			if(this.facing === direction.UP || this.facing === direction.DOWN)
-				this.sprite.y = newPos;
-			else
-				this.sprite.x = newPos;
+		// stop moving at destination
+		if(this.isMoving() && this.destinationReached() && !nextMove)
+			this.stopMoving();
 
-			// if our movement is complete, snap the sprite to position and null movement-related state
-			if(this.timeMoving >= this.moveDuration) {
-				//this.snapToTile();
-				this.timeMoving = 0;
-				this.destination = null;
-			}
-		}
+		// destination reached, but keep going in same direction
+		else if(this.isMoving() && this.destinationReached() && nextMove && nextMove === this.facing)
+			this.keepMovingSameDirection();
 
-		// if we are no longer moving and a new move is queued, start moving
-		if(!this.isMoving() && nextMove) {
-			this.facing = nextMove;
-			if(this.facing === direction.UP) this.destination = this.sprite.y - 16;
-			else if(this.facing === direction.DOWN) this.destination = this.sprite.y + 16;
-			else if(this.facing === direction.LEFT) this.destination = this.sprite.x - 16;
-			else if(this.facing === direction.RIGHT) this.destination = this.sprite.x + 16;
-		}
+		// destination reached, but change direction and continue
+		else if(this.isMoving() && this.destinationReached() && nextMove && nextMove !== this.facing)
+			this.keepMovingChangeDirection(nextMove);
+
+		// destination not yet reached, so keep going
+		else if(this.isMoving() && !this.destinationReached())
+			this.keepMoving();
+
+		// not moving yet, begin moving
+		else if(!this.isMoving() && nextMove)
+			this.startMoving(nextMove);
 	},
 
-	extrapolateNextPosition: function(delta) {
-		// the progress of a movement animation is based on the quotient of time passed during
-		// the animation and the preset duration of the animation
-		this.timeMoving += delta;
-		var t = this.timeMoving / this.moveDuration;
-			
-		// if we are in motion, we can  derive the direction of motion based on the
-		// direction the sprite is facing, then grab the coordinate for the axis of motion
-		var currentPos = null;
-		if(this.facing === direction.UP || this.facing === direction.DOWN)
-			currentPos = this.sprite.y;
-		else
-			currentPos = this.sprite.x;
+	startMoving: function(dir) {
+		this.facing = dir;
 
-		// the new position is based on this time quotient
-		return currentPos + (this.destination - currentPos) * t;
+		if(this.facing === direction.UP) this.destination = this.sprite.y - 16;
+		else if(this.facing === direction.DOWN) this.destination = this.sprite.y + 16;
+		else if(this.facing === direction.LEFT) this.destination = this.sprite.x - 16;
+		else if(this.facing === direction.RIGHT) this.destination = this.sprite.x + 16;
+
+		this.setVelocityByDirection();
 	},
 
-	snapToTile: function() {
+	keepMoving: function() {
+		this.setVelocityByDirection();
+	},
 
+	keepMovingSameDirection: function() {
+		if(this.facing === direction.UP) this.destination = this.sprite.y - 16;
+		else if(this.facing === direction.DOWN) this.destination = this.sprite.y + 16;
+		else if(this.facing === direction.LEFT) this.destination = this.sprite.x - 16;
+		else if(this.facing === direction.RIGHT) this.destination = this.sprite.x + 16;
+
+		this.setVelocityByDirection();
+	},
+
+	keepMovingChangeDirection: function(dir) {
+		this.facing = dir;
+
+		if(this.facing === direction.UP) this.destination = this.sprite.y - 16;
+		else if(this.facing === direction.DOWN) this.destination = this.sprite.y + 16;
+		else if(this.facing === direction.LEFT) this.destination = this.sprite.x - 16;
+		else if(this.facing === direction.RIGHT) this.destination = this.sprite.x + 16;
+
+		this.setVelocityByDirection();
+	},
+
+	stopMoving: function() {
+		this.destination = null;
+		this.sprite.body.velocity.x = this.sprite.body.velocity.y = 0;
+	},
+
+	destinationReached: function() {
+		if(this.facing === direction.UP)
+			return this.sprite.y <= this.destination;
+		else if(this.facing === direction.DOWN)
+			return this.sprite.y >= this.destination;
+		else if(this.facing === direction.LEFT)
+			return this.sprite.x <= this.destination;
+		else if(this.facing === direction.RIGHT)
+			return this.sprite.x >= this.destination;
 	},
 
 	isMoving: function() {
 		return this.destination !== null;
+	},
+
+	setVelocityByDirection: function() {
+		if(this.facing === direction.UP)
+			this.sprite.body.velocity.y = -this.moveSpeed;
+		else if(this.facing === direction.DOWN)
+			this.sprite.body.velocity.y = this.moveSpeed;
+		else if(this.facing === direction.LEFT)
+			this.sprite.body.velocity.x = -this.moveSpeed;
+		else if(this.facing === direction.RIGHT)
+			this.sprite.body.velocity.x = this.moveSpeed;
 	}
 };
