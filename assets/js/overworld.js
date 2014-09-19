@@ -12,6 +12,9 @@ PGM.Overworld.prototype = {
         // preload player assets
         this.player = new Player(this.game);
         this.player.preload()
+
+        // debug
+        this.game.time.advancedTiming = true;
     },
 
     create: function() {
@@ -32,5 +35,10 @@ PGM.Overworld.prototype = {
 
     update: function() {
         this.player.update();
+    },
+
+    render: function() {
+        // debug
+        this.game.debug.text(this.game.time.fps || '--', 2, 14, "#00ff00");
     }
 };
