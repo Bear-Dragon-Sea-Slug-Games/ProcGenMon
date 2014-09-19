@@ -13,7 +13,7 @@ Player = function(game) {
 
 Player.prototype = {
 
-	moveDuration: 1000,
+	moveDuration: 200,
 	timeMoving: 0,
 	destination: null,
 	facing: direction.DOWN,
@@ -53,7 +53,6 @@ Player.prototype = {
 
 		// if we are in the process of moving, finish the movement for this timestamp
 		if(this.isMoving()) {
-			console.log(this.game.time.elapsed);
 			newPos = this.extrapolateNextPosition(this.game.time.elapsed);
 			if(this.facing === direction.UP || this.facing === direction.DOWN)
 				this.sprite.y = newPos;
@@ -62,19 +61,19 @@ Player.prototype = {
 
 			// if our movement is complete, snap the sprite to position and null movement-related state
 			if(this.timeMoving >= this.moveDuration) {
-				this.snapToTile();
-				timeMoving = 0;
-				destination = null;
+				//this.snapToTile();
+				this.timeMoving = 0;
+				this.destination = null;
 			}
 		}
 
 		// if we are no longer moving and a new move is queued, start moving
 		if(!this.isMoving() && nextMove) {
 			this.facing = nextMove;
-			if(this.facing === direction.UP) destination = this.sprite.y -= 16;
-			else if(this.facing === direction.DOWN) destination = this.sprite.y += 16;
-			else if(this.facing === direction.LEFT) destination = this.sprite.x -= 16;
-			else if(this.facing === direction.RIGHT) destination = this.sprite.x += 16;
+			if(this.facing === direction.UP) this.destination = this.sprite.y - 16;
+			else if(this.facing === direction.DOWN) this.destination = this.sprite.y + 16;
+			else if(this.facing === direction.LEFT) this.destination = this.sprite.x - 16;
+			else if(this.facing === direction.RIGHT) this.destination = this.sprite.x + 16;
 		}
 	},
 
@@ -93,7 +92,7 @@ Player.prototype = {
 			currentPos = this.sprite.x;
 
 		// the new position is based on this time quotient
-		return currentPos + (destination - currentPos) * t;
+		return currentPos + (this.destination - currentPos) * t;
 	},
 
 	snapToTile: function() {
