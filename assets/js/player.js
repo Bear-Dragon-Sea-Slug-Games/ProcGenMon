@@ -127,13 +127,18 @@ Player.prototype = {
 	},
 
 	setVelocityByDirection: function() {
-		if(this.facing === direction.UP)
+		if(this.facing === direction.UP) {
+			this.sprite.body.velocity.x = 0;
 			this.sprite.body.velocity.y = -this.moveSpeed;
-		else if(this.facing === direction.DOWN)
+		} else if(this.facing === direction.DOWN) {
+			this.sprite.body.velocity.x = 0;
 			this.sprite.body.velocity.y = this.moveSpeed;
-		else if(this.facing === direction.LEFT)
+		} else if(this.facing === direction.LEFT) {
+			this.sprite.body.velocity.y = 0;
 			this.sprite.body.velocity.x = -this.moveSpeed;
-		else if(this.facing === direction.RIGHT)
+		} else if(this.facing === direction.RIGHT) {
+			this.sprite.body.velocity.y = 0;
 			this.sprite.body.velocity.x = this.moveSpeed;
+		}
 	}
 };
