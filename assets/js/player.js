@@ -49,7 +49,7 @@ Player.prototype = {
     update: function() {
 		var nextMove = null;
 
-		if (this.snapOnNextFrame){
+		if(this.snapOnNextFrame) {
 		    this.snapToTile(this.destination.x,this.destination.y);
 		    this.destination = null;
 		    this.snapOnNextFrame = false;
@@ -61,31 +61,24 @@ Player.prototype = {
 		else if(this.cursors.right.isDown) nextMove = direction.RIGHT;
 
 		// stop moving at destination
-		if(this.isMoving() && this.destinationReached() && !nextMove) {
+		if(this.isMoving() && this.destinationReached() && !nextMove)
 		    this.stopMoving();
 
-		}
-
 		// destination reached, but keep going in same direction
-		else if(this.isMoving() && this.destinationReached() && nextMove && nextMove === this.lastMove) {
+		else if(this.isMoving() && this.destinationReached() && nextMove && nextMove === this.lastMove)
 		    this.keepMovingSameDirection();
 
-		}
-
 		// destination reached, but change direction and continue
-		else if(this.isMoving() && this.destinationReached() && nextMove && nextMove !== this.lastMove) {
+		else if(this.isMoving() && this.destinationReached() && nextMove && nextMove !== this.lastMove)
 		    this.keepMovingChangeDirection(nextMove);
-		}
 
 		// destination not yet reached, so keep goin
-		else if(this.isMoving() && !this.destinationReached()) {
+		else if(this.isMoving() && !this.destinationReached())
 		    this.keepMoving();
-		}
 
 		// not moving yet, begin moving
-		else if(!this.isMoving() && nextMove) {
+		else if(!this.isMoving() && nextMove)
 		    this.startMoving(nextMove);
-		}
     },
 
     getCurrentTile: function() {
