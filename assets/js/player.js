@@ -13,9 +13,11 @@ Player = function(game) {
 
 Player.prototype = {
 
+	tileSize: 16,
 	moveSpeed: 100,
 	destination: null,
 	facing: direction.DOWN,
+	lastMove: null,
 
 	preload: function() {
 		this.game.load.spritesheet('player', 'assets/img/trainer.png', 24, 32, 12, 2, 2);
@@ -51,94 +53,112 @@ Player.prototype = {
 		else if(this.cursors.right.isDown) nextMove = direction.RIGHT;
 
 		// stop moving at destination
-		if(this.isMoving() && this.destinationReached() && !nextMove)
+		if(this.isMoving() && this.destinationReached() && !nextMove) {
 			this.stopMoving();
+		}
 
 		// destination reached, but keep going in same direction
-		else if(this.isMoving() && this.destinationReached() && nextMove && nextMove === this.facing)
+		else if(this.isMoving() && this.destinationReached() && nextMove && nextMove === this.lastMove) {
 			this.keepMovingSameDirection();
+		}
 
 		// destination reached, but change direction and continue
-		else if(this.isMoving() && this.destinationReached() && nextMove && nextMove !== this.facing)
+		else if(this.isMoving() && this.destinationReached() && nextMove && nextMove !== this.lastMove) {
 			this.keepMovingChangeDirection(nextMove);
+		}
 
-		// destination not yet reached, so keep going
-		else if(this.isMoving() && !this.destinationReached())
+		// destination not yet reached, so keep goin
+		else if(this.isMoving() && !this.destinationReached()) {
 			this.keepMoving();
+		}
 
 		// not moving yet, begin moving
-		else if(!this.isMoving() && nextMove)
+		else if(!this.isMoving() && nextMove) {
 			this.startMoving(nextMove);
+		}
+
+		this.lastPos = { x: this.sprite.x, y: this.sprite.y };
+	},
+
+	getCurrentTile: function() {
+		var tileX = this.sprite.x / this.tileSize;
+		var tileY = this.sprite.y / this.tileSize;
+
+		return { x: tileX, y: tileY };
+	},
+
+	getAdjacentTile: function(tileX, tileY, dir) {
+		if(dir === direction.UP) tileY += -1;
+		else if(dir === direction.DOWN) tileY += 1;
+		else if(dir === direction.LEFT) tileX += -1;
+		else if(dir === direction.RIGHT) tileX += 1;
+
+		return { x: tileX, y: tileY };
 	},
 
 	startMoving: function(dir) {
-		this.facing = dir;
-
-		if(this.facing === direction.UP) this.destination = this.sprite.y - 16;
-		else if(this.facing === direction.DOWN) this.destination = this.sprite.y + 16;
-		else if(this.facing === direction.LEFT) this.destination = this.sprite.x - 16;
-		else if(this.facing === direction.RIGHT) this.destination = this.sprite.x + 16;
-
-		this.setVelocityByDirection();
+		var currentTile = this.getCurrentTile();
+		this.destination = this.getAdjacentTile(currentTile.x, currentTile.y, dir);
+		this.setVelocityByTile(this.destination.x, this.destination.y, this.moveSpeed);
+		this.lastMove = dir;
 	},
 
 	keepMoving: function() {
-		this.setVelocityByDirection();
+		this.setVelocityByTile(this.destination.x, this.destination.y, this.moveSpeed);
 	},
 
 	keepMovingSameDirection: function() {
-		if(this.facing === direction.UP) this.destination = this.sprite.y - 16;
-		else if(this.facing === direction.DOWN) this.destination = this.sprite.y + 16;
-		else if(this.facing === direction.LEFT) this.destination = this.sprite.x - 16;
-		else if(this.facing === direction.RIGHT) this.destination = this.sprite.x + 16;
-
-		this.setVelocityByDirection();
+		this.destination = this.getAdjacentTile(this.destination.x, this.destination.y, this.lastMove);
+		this.setVelocityByTile(this.destination.x, this.destination.y, this.moveSpeed);
 	},
 
 	keepMovingChangeDirection: function(dir) {
-		this.facing = dir;
-
-		if(this.facing === direction.UP) this.destination = this.sprite.y - 16;
-		else if(this.facing === direction.DOWN) this.destination = this.sprite.y + 16;
-		else if(this.facing === direction.LEFT) this.destination = this.sprite.x - 16;
-		else if(this.facing === direction.RIGHT) this.destination = this.sprite.x + 16;
-
-		this.setVelocityByDirection();
+		this.snapToTile(this.destination.x, this.destination.y);
+		this.destination = this.getAdjacentTile(this.destination.x, this.destination.y, dir);
+		this.setVelocityByTile(this.destination.x, this.destination.y, this.moveSpeed);
+		this.lastMove = dir;
 	},
 
 	stopMoving: function() {
-		this.destination = null;
+		this.snapToTile(this.destination.x, this.destination.y);
 		this.sprite.body.velocity.x = this.sprite.body.velocity.y = 0;
+		this.destination = null;
+		
+	},
+
+	snapToTile: function(x, y) {
+		this.sprite.x = x * this.tileSize;
+		this.sprite.y = y * this.tileSize;
 	},
 
 	destinationReached: function() {
-		if(this.facing === direction.UP)
-			return this.sprite.y <= this.destination;
-		else if(this.facing === direction.DOWN)
-			return this.sprite.y >= this.destination;
-		else if(this.facing === direction.LEFT)
-			return this.sprite.x <= this.destination;
-		else if(this.facing === direction.RIGHT)
-			return this.sprite.x >= this.destination;
+		var _x = this.destination.x * this.tileSize;
+		var _y = this.destination.y * this.tileSize;
+
+		var result = (
+			(this.sprite.x >= _x && this.lastPos.x < _x) ||
+			(this.sprite.x <= _x && this.lastPos.x > _x) ||
+			(this.sprite.y >= _y && this.lastPos.y < _y) ||
+			(this.sprite.y <= _y && this.lastPos.y > _y)
+		);
+		return result;
 	},
 
 	isMoving: function() {
 		return this.destination !== null;
 	},
 
-	setVelocityByDirection: function() {
-		if(this.facing === direction.UP) {
-			this.sprite.body.velocity.x = 0;
-			this.sprite.body.velocity.y = -this.moveSpeed;
-		} else if(this.facing === direction.DOWN) {
-			this.sprite.body.velocity.x = 0;
-			this.sprite.body.velocity.y = this.moveSpeed;
-		} else if(this.facing === direction.LEFT) {
-			this.sprite.body.velocity.y = 0;
-			this.sprite.body.velocity.x = -this.moveSpeed;
-		} else if(this.facing === direction.RIGHT) {
-			this.sprite.body.velocity.y = 0;
-			this.sprite.body.velocity.x = this.moveSpeed;
-		}
+	setVelocityByTile: function(tileX, tileY, velocity) {
+		var tileCenterX = tileX * this.tileSize + this.tileSize / 2;
+		var tileCenterY = tileY * this.tileSize + this.tileSize / 2;
+
+		var entityCenterX = this.sprite.x + 8;
+		var entityCenterY = this.sprite.y + 8;
+
+		this.sprite.body.velocity.x = this.sprite.body.velocity.y = 0;
+		if(entityCenterX > tileCenterX) this.sprite.body.velocity.x = -velocity;
+		else if(entityCenterX < tileCenterX) this.sprite.body.velocity.x = velocity;
+		else if(entityCenterY > tileCenterY) this.sprite.body.velocity.y = -velocity;
+		else if(entityCenterY < tileCenterY) this.sprite.body.velocity.y = velocity;
 	}
 };
