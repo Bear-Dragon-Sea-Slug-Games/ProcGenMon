@@ -86,8 +86,6 @@ Player.prototype = {
 		else if(!this.isMoving() && nextMove) {
 		    this.startMoving(nextMove);
 		}
-
-		this.lastPos = { x: this.sprite.x, y: this.sprite.y };
     },
 
     getCurrentTile: function() {
