@@ -21,19 +21,19 @@ Player.prototype = {
     lastMove: null,
 
     preload: function() {
-	this.game.load.spritesheet('player', 'assets/img/trainer.png', 24, 32, 12, 2, 2);
+		this.game.load.spritesheet('player', 'assets/img/trainer.png', 24, 32, 12, 2, 2);
     },
 
     create: function() {
-	this.sprite = game.add.sprite(300, 400, 'player');
-	this.game.camera.follow(this.sprite);
+		this.sprite = game.add.sprite(300, 400, 'player');
+		this.game.camera.follow(this.sprite);
 
-	// enable physics
-	this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
-	this.sprite.body.collideWorldBounds = true;
-	this.sprite.body.setSize(24, 32);
+		// enable physics
+		this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+		this.sprite.body.collideWorldBounds = true;
+		this.sprite.body.setSize(24, 32);
 
-	// walking animations
+		// walking animations
         this.sprite.animations.add('up_1', [10, 11, 10], 5, true);
         this.sprite.animations.add('up_2', [10, 12, 10], 5, true);
 		this.sprite.animations.add('down_1', [0, 1, 0], 5, true);
@@ -47,47 +47,47 @@ Player.prototype = {
     },
 
     update: function() {
-	var nextMove = null;
+		var nextMove = null;
 
-	if (this.snapOnNextFrame){
-	    this.snapToTile(this.destination.x,this.destination.y);
-	    this.destination = null;
-	    this.snapOnNextFrame = false;
-	}
-	
-	if(this.cursors.up.isDown) nextMove = direction.UP;
-	else if(this.cursors.down.isDown) nextMove = direction.DOWN;
-	else if(this.cursors.left.isDown) nextMove = direction.LEFT;
-	else if(this.cursors.right.isDown) nextMove = direction.RIGHT;
+		if (this.snapOnNextFrame){
+		    this.snapToTile(this.destination.x,this.destination.y);
+		    this.destination = null;
+		    this.snapOnNextFrame = false;
+		}
+		
+		if(this.cursors.up.isDown) nextMove = direction.UP;
+		else if(this.cursors.down.isDown) nextMove = direction.DOWN;
+		else if(this.cursors.left.isDown) nextMove = direction.LEFT;
+		else if(this.cursors.right.isDown) nextMove = direction.RIGHT;
 
-	// stop moving at destination
-	if(this.isMoving() && this.destinationReached() && !nextMove) {
-	    this.stopMoving();
+		// stop moving at destination
+		if(this.isMoving() && this.destinationReached() && !nextMove) {
+		    this.stopMoving();
 
-	}
+		}
 
-	// destination reached, but keep going in same direction
-	else if(this.isMoving() && this.destinationReached() && nextMove && nextMove === this.lastMove) {
-	    this.keepMovingSameDirection();
+		// destination reached, but keep going in same direction
+		else if(this.isMoving() && this.destinationReached() && nextMove && nextMove === this.lastMove) {
+		    this.keepMovingSameDirection();
 
-	}
+		}
 
-	// destination reached, but change direction and continue
-	else if(this.isMoving() && this.destinationReached() && nextMove && nextMove !== this.lastMove) {
-	    this.keepMovingChangeDirection(nextMove);
-	}
+		// destination reached, but change direction and continue
+		else if(this.isMoving() && this.destinationReached() && nextMove && nextMove !== this.lastMove) {
+		    this.keepMovingChangeDirection(nextMove);
+		}
 
-	// destination not yet reached, so keep goin
-	else if(this.isMoving() && !this.destinationReached()) {
-	    this.keepMoving();
-	}
+		// destination not yet reached, so keep goin
+		else if(this.isMoving() && !this.destinationReached()) {
+		    this.keepMoving();
+		}
 
-	// not moving yet, begin moving
-	else if(!this.isMoving() && nextMove) {
-	    this.startMoving(nextMove);
-	}
+		// not moving yet, begin moving
+		else if(!this.isMoving() && nextMove) {
+		    this.startMoving(nextMove);
+		}
 
-	this.lastPos = { x: this.sprite.x, y: this.sprite.y };
+		this.lastPos = { x: this.sprite.x, y: this.sprite.y };
     },
 
     getCurrentTile: function() {

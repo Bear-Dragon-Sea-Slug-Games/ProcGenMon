@@ -13,4 +13,4 @@ PGM.Preload = {
 	}
 };
 
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', PGM.Preload)
+var game = new Phaser.Game(480, 360, Phaser.AUTO, 'game', PGM.Preload)
