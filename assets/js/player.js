@@ -94,8 +94,8 @@ Player.prototype = {
     },
 
     getCurrentTile: function() {
-        var tileX = this.sprite.x; // / this.tileSize;
-        var tileY = this.sprite.y; // / this.tileSize;
+        var tileX = this.sprite.x;
+        var tileY = this.sprite.y;
         return { x: tileX, y: tileY };
     },
 
@@ -137,13 +137,13 @@ Player.prototype = {
     },
 
     snapToTile: function(x, y) {
-        this.sprite.x = x; // * this.tileSize;
-        this.sprite.y = y; // * this.tileSize;  
+        this.sprite.x = x;
+        this.sprite.y = y; 
     },
     
     destinationReached: function() {
-        var _x = this.destination.x; // * this.tileSize;
-        var _y = this.destination.y; // * this.tileSize;
+        var _x = this.destination.x;
+        var _y = this.destination.y;
         
         var _dt = this.game.time.physicsElapsed;
         var _dx = this.sprite.body.velocity.x * _dt;
