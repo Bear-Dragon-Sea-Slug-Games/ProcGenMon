@@ -74,6 +74,9 @@ Player.prototype = {
             else if(i === 3) nextMove = direction.RIGHT;
         }
 
+        // check if character is running
+        this.isRunning = this.game.input.keyboard.isDown(Phaser.Keyboard.Z) ? true : false;
+
         // stop moving at destination
         if(this.isMoving() && this.destinationReached() && !nextMove)
             this.stopMoving();
