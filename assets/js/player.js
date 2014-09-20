@@ -54,11 +54,23 @@ Player.prototype = {
             this.destination = null;
             this.snapOnNextFrame = false;
         }
-        
-        if(this.cursors.up.isDown) nextMove = direction.UP;
-        else if(this.cursors.down.isDown) nextMove = direction.DOWN;
-        else if(this.cursors.left.isDown) nextMove = direction.LEFT;
-        else if(this.cursors.right.isDown) nextMove = direction.RIGHT;
+
+        // collect an array of key-press durations
+        // if a key is not pressed, its value is very large, since we want the shortest keypress
+        var keyTimes = [Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE, Number.MAX_VALUE];
+        if(this.cursors.up.isDown) keyTimes[0] = this.cursors.up.duration;
+        if(this.cursors.down.isDown) keyTimes[1] = this.cursors.down.duration;
+        if(this.cursors.left.isDown) keyTimes[2] = this.cursors.left.duration;
+        if(this.cursors.right.isDown) keyTimes[3] = this.cursors.right.duration;
+
+        // grab the index of whichever key has been held down the least amount of time
+        var i = keyTimes.indexOf(Math.min.apply(Math, keyTimes));
+        if(keyTimes[i] !== Number.MAX_VALUE) {
+            if(i === 0) nextMove = direction.UP;
+            else if(i === 1) nextMove = direction.DOWN;
+            else if(i === 2) nextMove = direction.LEFT;
+            else if(i === 3) nextMove = direction.RIGHT;
+        }
 
         // stop moving at destination
         if(this.isMoving() && this.destinationReached() && !nextMove)
