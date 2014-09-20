@@ -17,7 +17,6 @@ Player.prototype = {
     moveSpeed: 100,
     destination: null,
     snapOnNextFrame: false,
-    facing: direction.DOWN,
     lastMove: null,
 
     preload: function() {
