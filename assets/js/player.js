@@ -8,7 +8,6 @@ var direction = {
 Player = function(game) {
     this.game = game;
     this.sprite = null;
-    this.model = null;
     this.cursors = null;
 }
 
@@ -28,21 +27,13 @@ Player.prototype = {
     },
 
     create: function() {
-        this.model = game.add.sprite(300, 400, 'player');
-        this.model.visible = false;
-
-        this.sprite = game.add.sprite(this.model.x, this.model.y, 'player');
+        this.sprite = game.add.sprite(300, 400, 'player');
         this.game.camera.follow(this.sprite);
 
         // enable physics
         this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
         this.sprite.body.collideWorldBounds = true;
         this.sprite.body.setSize(24, 32);
-
-        this.game.physics.enable(this.model, Phaser.Physics.ARCADE);
-        this.model.body.collideWorldBounds = true;
-        this.model.body.setSize(24, 32);
-
 
         // walking animations
         this.sprite.animations.add('up_1', [9, 10, 9], 5, true);
@@ -105,15 +96,11 @@ Player.prototype = {
         // not moving yet, begin moving
         else if(!this.isMoving() && nextMove)
             this.startMoving(nextMove);
-
-        // make the sprite follow the player model, but at rounded positions to prevent jitter
-        this.sprite.x = Math.floor(this.model.x);
-        this.sprite.y = Math.floor(this.model.y);
     },
 
     getCurrentTile: function() {
-        var tileX = this.model.x;
-        var tileY = this.model.y;
+        var tileX = this.sprite.x;
+        var tileY = this.sprite.y;
         return { x: tileX, y: tileY };
     },
 
@@ -150,13 +137,13 @@ Player.prototype = {
     },
 
     stopMoving: function() {
-        this.model.body.velocity.x = this.model.body.velocity.y = 0;
+        this.sprite.body.velocity.x = this.sprite.body.velocity.y = 0;
         this.snapOnNextFrame = true;
     },
 
     snapToTile: function(x, y) {
-        this.model.x = x;
-        this.model.y = y; 
+        this.sprite.x = x;
+        this.sprite.y = y; 
     },
     
     destinationReached: function() {
@@ -164,14 +151,14 @@ Player.prototype = {
         var _y = this.destination.y;
         
         var _dt = this.game.time.physicsElapsed;
-        var _dx = this.model.body.velocity.x * _dt;
-        var _dy = this.model.body.velocity.y * _dt;
+        var _dx = this.sprite.body.velocity.x * _dt;
+        var _dy = this.sprite.body.velocity.y * _dt;
 
         var result = (
-            (this.model.x < _x && this.model.x + _dx >= _x) ||
-            (this.model.x > _x && this.model.x + _dx <= _x) ||
-            (this.model.y < _y && this.model.y + _dy >= _y) ||
-            (this.model.y > _y && this.model.y + _dy <= _y)
+            (this.sprite.x < _x && this.sprite.x + _dx >= _x) ||
+            (this.sprite.x > _x && this.sprite.x + _dx <= _x) ||
+            (this.sprite.y < _y && this.sprite.y + _dy >= _y) ||
+            (this.sprite.y > _y && this.sprite.y + _dy <= _y)
         );
         return result;
     },
@@ -184,16 +171,16 @@ Player.prototype = {
         var tileCenterX = tileX  + this.tileSize / 2;
         var tileCenterY = tileY  + this.tileSize / 2;
 
-        var entityCenterX = this.model.x + 8;
-        var entityCenterY = this.model.y + 8;
+        var entityCenterX = this.sprite.x + 8;
+        var entityCenterY = this.sprite.y + 8;
 
-        this.model.body.velocity.x = this.model.body.velocity.y = 0;
+        this.sprite.body.velocity.x = this.sprite.body.velocity.y = 0;
         var moveSpeed = this.getMoveSpeed();
 
-        if(entityCenterX > tileCenterX) this.model.body.velocity.x = -moveSpeed;
-        else if(entityCenterX < tileCenterX) this.model.body.velocity.x = moveSpeed;
-        else if(entityCenterY > tileCenterY) this.model.body.velocity.y = -moveSpeed;
-        else if(entityCenterY < tileCenterY) this.model.body.velocity.y = moveSpeed;
+        if(entityCenterX > tileCenterX) this.sprite.body.velocity.x = -moveSpeed;
+        else if(entityCenterX < tileCenterX) this.sprite.body.velocity.x = moveSpeed;
+        else if(entityCenterY > tileCenterY) this.sprite.body.velocity.y = -moveSpeed;
+        else if(entityCenterY < tileCenterY) this.sprite.body.velocity.y = moveSpeed;
     },
 
     getMoveSpeed: function() {
